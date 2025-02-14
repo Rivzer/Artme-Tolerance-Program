@@ -1,0 +1,11 @@
+{
+  "measurements": [],
+  "tolerance": {
+    "min": 1.7,
+    "max": 1.82
+  },
+  "isRunning": false,
+  "isPaused": false,
+  "startTime": null,
+  "elapsedTime": 0
+}
