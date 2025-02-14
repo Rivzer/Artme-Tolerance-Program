@@ -256,7 +256,7 @@
             currentSpoolNumber = parseInt(savedSpoolNumber, 10);
             materialSelectEl.value = currentMaterial;
             spoolNumberEl.textContent = currentSpoolNumber;
-            setTimeout(updateButtonStates, 2000);
+            updateButtonStates();
         }
 
         materialSelectEl.addEventListener('change', onMaterialChange);
@@ -265,6 +265,6 @@
         resetButton.addEventListener('click', resetMeasurement);
         saveButton.addEventListener('click', saveData);
 
-        setInterval(updateMeasurement, 2000);
+        setInterval(updateMeasurement, 1000);
     });
 })();
