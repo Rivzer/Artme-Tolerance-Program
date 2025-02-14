@@ -10,7 +10,6 @@ async function loadData() {
     const fileData = await fs.readFile(dataFilePath, 'utf8');
     data = JSON.parse(fileData);
   } catch (err) {
-    // Bij fout (bijvoorbeeld bestand bestaat niet) initialiseren we met default waarden
     data = {
       measurements: [],
       tolerance: { min: 1.70, max: 1.82 },
