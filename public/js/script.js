@@ -1,53 +1,71 @@
-let historyChart;
-let running = false;
-let paused = false;
-let startTime;
-let elapsedTime = 0;
-let currentMaterial = null;
-let currentSpoolNumber = null;
+(() => {
+    let historyChart;
+    let running = false;
+    let paused = false;
+    let startTime;
+    let elapsedTime = 0;
+    let currentMaterial = null;
+    let currentSpoolNumber = null;
 
-function initChart() {
-    const ctx = document.getElementById('historyChart').getContext('2d');
-    historyChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [{
-                label: 'Diameter (mm)',
-                data: [],
-                borderColor: 'rgb(75, 192, 192)',
-                borderWidth: 2,
-                fill: false,
-                pointRadius: 2,
-                tension: 0.3
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: { title: { display: true, text: 'Time' } },
-                y: { title: { display: true, text: 'Diameter (mm)' } }
+    let latestMeasurementEl,
+        highestMeasurementEl,
+        lowestMeasurementEl,
+        averageMeasurementEl,
+        durationEl,
+        materialSelectEl,
+        spoolNumberEl,
+        startButton,
+        stopButton,
+        resetButton,
+        saveButton;
+
+    const initChart = () => {
+        const ctx = document.getElementById('historyChart').getContext('2d');
+        historyChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Diameter (mm)',
+                    data: [],
+                    borderColor: 'rgb(75, 192, 192)',
+                    borderWidth: 2,
+                    fill: false,
+                    pointRadius: 2,
+                    tension: 0.3
+                }]
             },
-            animation: {
-                duration: 1000,
-                easing: 'easeOutQuart'
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { title: { display: true, text: 'Time' } },
+                    y: { title: { display: true, text: 'Diameter (mm)' } }
+                },
+                animation: {
+                    duration: 1000,
+                    easing: 'easeOutQuart'
+                }
             }
-        }
-    });
-}
+        });
+    };
 
-function updateMeasurement() {
-    fetch('/get-measurement')
-        .then(response => response.json())
-        .then(data => {
+    const calculateAverageDiameter = measurements => {
+        if (measurements.length === 0) return '0.00';
+        const sum = measurements.reduce((acc, measurement) => acc + measurement, 0);
+        return (sum / measurements.length).toFixed(2);
+    };
+
+    const updateMeasurement = async () => {
+        try {
+            const response = await fetch('/get-measurement');
+            const data = await response.json();
+
             if (data.measurement !== null) {
-                document.getElementById('latest-measurement').textContent = data.measurement.toFixed(2);
-                document.getElementById('highest-measurement').textContent = Math.max(...data.measurements).toFixed(2);
-                document.getElementById('lowest-measurement').textContent = Math.min(...data.measurements).toFixed(2);
-
-                const averageDiameter = calculateAverageDiameter(data.measurements);
-                document.getElementById('avarage-measurement').textContent = averageDiameter;
+                latestMeasurementEl.textContent = data.measurement.toFixed(2);
+                highestMeasurementEl.textContent = Math.max(...data.measurements).toFixed(2);
+                lowestMeasurementEl.textContent = Math.min(...data.measurements).toFixed(2);
+                averageMeasurementEl.textContent = calculateAverageDiameter(data.measurements);
 
                 historyChart.data.labels.push(new Date().toLocaleTimeString());
                 historyChart.data.datasets[0].data.push(data.measurement);
@@ -70,195 +88,183 @@ function updateMeasurement() {
             }
 
             updateButtonStates();
-        })
-        .catch(error => console.error('Fout bij ophalen meting:', error));
-}
+        } catch (error) {
+            console.error('Fout bij ophalen meting:', error);
+        }
+    };
 
-function startMeasurement() {
-    fetch('/start', { method: 'POST' })
-        .then(() => {
+    const startMeasurement = async () => {
+        try {
+            await fetch('/start', { method: 'POST' });
             updateMeasurement();
             updateButtonStates();
             toggleMaterialDropdown();
-        });
-}
+        } catch (error) {
+            console.error('Fout bij starten meting:', error);
+        }
+    };
 
-function stopMeasurement() {
-    fetch('/stop', { method: 'POST' })
-        .then(() => {
+    const stopMeasurement = async () => {
+        try {
+            await fetch('/stop', { method: 'POST' });
             updateMeasurement();
             updateButtonStates();
             toggleMaterialDropdown();
-        });
-}
+        } catch (error) {
+            console.error('Fout bij stoppen meting:', error);
+        }
+    };
 
-function resetMeasurement() {
-    fetch('/reset', { method: 'POST' })
-        .then(() => {
+    const resetMeasurement = async () => {
+        try {
+            await fetch('/reset', { method: 'POST' });
             historyChart.data.labels = [];
             historyChart.data.datasets[0].data = [];
             historyChart.update();
-            document.getElementById('latest-measurement').textContent = 'N/A';
-            document.getElementById('avarage-measurement').textContent = 'N/A';
-            document.getElementById('highest-measurement').textContent = 'N/A';
-            document.getElementById('lowest-measurement').textContent = 'N/A';
-            document.getElementById('duration').textContent = '00:00:00';
+            latestMeasurementEl.textContent = 'N/A';
+            averageMeasurementEl.textContent = 'N/A';
+            highestMeasurementEl.textContent = 'N/A';
+            lowestMeasurementEl.textContent = 'N/A';
+            durationEl.textContent = '00:00:00';
+
             updateMeasurement();
             updateButtonStates();
             toggleMaterialDropdown();
 
             if (currentMaterial !== null) {
-                fetch(`/get-next-spool/${currentMaterial}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        currentSpoolNumber = data.nextSpoolNumber;
-                        document.getElementById('spool-number').textContent = currentSpoolNumber;
-                        updateButtonStates();
+                const response = await fetch(`/get-next-spool/${currentMaterial}`);
+                const result = await response.json();
+                currentSpoolNumber = result.nextSpoolNumber;
+                spoolNumberEl.textContent = currentSpoolNumber;
+                updateButtonStates();
 
-                        localStorage.setItem('currentSpoolNumber', currentSpoolNumber);
-                    })
-                    .catch(error => console.error('Fout bij ophalen spoolnummer:', error));
+                localStorage.setItem('currentSpoolNumber', currentSpoolNumber);
             }
-        });
-}
-
-function updateDuration() {
-    if (running && !paused && startTime) {
-        const elapsed = Date.now() - startTime;
-        const hours = Math.floor(elapsed / 3600000);
-        const minutes = Math.floor((elapsed % 3600000) / 60000);
-        const seconds = Math.floor((elapsed % 60000) / 1000);
-        document.getElementById('duration').textContent =
-            `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        setTimeout(updateDuration, 1000);
-    }
-}
-
-function updateButtonStates() {
-    const startButton = document.querySelector('.start-btn');
-    const stopButton = document.querySelector('.stop-btn');
-    const resetButton = document.querySelector('.reset-btn');
-    const saveButton = document.querySelector('.save-btn');
-
-    if (currentMaterial) {
-        startButton.disabled = false;
-        stopButton.disabled = !running || paused;
-        resetButton.disabled = !running;
-        saveButton.disabled = historyChart.data.datasets[0].data.length === 0;
-
-        if (running && paused) {
-            startButton.textContent = 'Resume';
-        } else {
-            startButton.textContent = 'Start';
+        } catch (error) {
+            console.error('Fout bij resetten meting:', error);
         }
-
-        if(running && !paused) startButton.disabled = true;
-
-        toggleMaterialDropdown();
-    } else {
-        startButton.disabled = true;
-        stopButton.disabled = true;
-        resetButton.disabled = true;
-        saveButton.disabled = true;
-    }
-}
-
-function saveData() {
-    if (historyChart.data.datasets[0].data.length === 0) {
-        alert('Geen data beschikbaar om op te slaan.');
-        return;
-    }
-
-    const measurements = historyChart.data.datasets[0].data;
-    const sum = measurements.reduce((acc, measurement) => acc + measurement, 0);
-    const averageDiameter = (sum / measurements.length).toFixed(2);
-
-    const data = {
-        material: currentMaterial,
-        spoolNumber: currentSpoolNumber,
-        measurements: historyChart.data.datasets[0].data,
-        timestamps: historyChart.data.labels,
-        highest: document.getElementById('highest-measurement').textContent,
-        lowest: document.getElementById('lowest-measurement').textContent,
-        duration: document.getElementById('duration').textContent,
-        averageDiameter: averageDiameter
     };
 
-    fetch('/save-data', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    })
-    .then(response => response.json())
-    .then(result => {
-        if (result.success) {
-            alert('Data succesvol opgeslagen.');
-            // Voeg een link toe naar de QR-code
-            const qrCodeUrl = `/qr/${currentMaterial}/${currentSpoolNumber}`;
-            console.log('Scan deze QR-code om de rolgegevens te bekijken:', qrCodeUrl);
+    const updateDuration = () => {
+        if (running && !paused && startTime) {
+            const elapsed = Date.now() - startTime;
+            const hours = Math.floor(elapsed / 3600000);
+            const minutes = Math.floor((elapsed % 3600000) / 60000);
+            const seconds = Math.floor((elapsed % 60000) / 1000);
+            durationEl.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            setTimeout(updateDuration, 1000);
+        }
+    };
+
+    const updateButtonStates = () => {
+        if (currentMaterial) {
+            startButton.disabled = running && !paused;
+            stopButton.disabled = !running || paused;
+            resetButton.disabled = !running;
+            saveButton.disabled = historyChart.data.datasets[0].data.length === 0;
+
+            startButton.textContent = (running && paused) ? 'Resume' : 'Start';
+            toggleMaterialDropdown();
         } else {
+            startButton.disabled = true;
+            stopButton.disabled = true;
+            resetButton.disabled = true;
+            saveButton.disabled = true;
+        }
+    };
+
+    const saveData = async () => {
+        if (historyChart.data.datasets[0].data.length === 0) {
+            alert('Geen data beschikbaar om op te slaan.');
+            return;
+        }
+
+        const measurements = historyChart.data.datasets[0].data;
+        const averageDiameter = calculateAverageDiameter(measurements);
+
+        const dataToSave = {
+            material: currentMaterial,
+            spoolNumber: currentSpoolNumber,
+            measurements: measurements,
+            timestamps: historyChart.data.labels,
+            highest: highestMeasurementEl.textContent,
+            lowest: lowestMeasurementEl.textContent,
+            duration: durationEl.textContent,
+            averageDiameter: averageDiameter
+        };
+
+        try {
+            const response = await fetch('/save-data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dataToSave)
+            });
+            const result = await response.json();
+            if (result.success) {
+                alert('Data succesvol opgeslagen.');
+                const qrCodeUrl = `/qr/${currentMaterial}/${currentSpoolNumber}`;
+                console.log('Scan deze QR-code om de rolgegevens te bekijken:', qrCodeUrl);
+            } else {
+                alert('Fout bij opslaan van data.');
+            }
+        } catch (error) {
+            console.error('Fout bij opslaan van data:', error);
             alert('Fout bij opslaan van data.');
         }
-    })
-    .catch(error => {
-        console.error('Fout bij opslaan van data:', error);
-        alert('Fout bij opslaan van data.');
-    });
-}
+    };
 
-function toggleMaterialDropdown() {
-    const materialSelect = document.getElementById('material-select');
-    materialSelect.disabled = running || paused;
-}
+    const toggleMaterialDropdown = () => {
+        materialSelectEl.disabled = running || paused;
+    };
 
-function calculateAverageDiameter(measurements) {
-    if (measurements.length === 0) return 0; // Als er geen metingen zijn, retourneer 0
-    const sum = measurements.reduce((acc, measurement) => acc + measurement, 0);
-    return (sum / measurements.length).toFixed(2); // Gemiddelde diameter met 2 decimalen
-}
-
-document.getElementById('material-select').addEventListener('change', function () {
-    const selectedMaterial = this.value;
-
-    fetch(`/get-next-spool/${selectedMaterial}`)
-        .then(response => response.json())
-        .then(data => {
+    const onMaterialChange = async (e) => {
+        const selectedMaterial = e.target.value;
+        try {
+            const response = await fetch(`/get-next-spool/${selectedMaterial}`);
+            const result = await response.json();
             currentMaterial = selectedMaterial;
-            currentSpoolNumber = data.nextSpoolNumber;
-            document.getElementById('spool-number').textContent = currentSpoolNumber;
+            currentSpoolNumber = result.nextSpoolNumber;
+            spoolNumberEl.textContent = currentSpoolNumber;
             updateButtonStates();
 
             localStorage.setItem('selectedMaterial', currentMaterial);
             localStorage.setItem('currentSpoolNumber', currentSpoolNumber);
-        })
-        .catch(error => console.error('Fout bij ophalen spoolnummer:', error));
-});
+        } catch (error) {
+            console.error('Fout bij ophalen spoolnummer:', error);
+        }
+    };
 
-document.addEventListener('DOMContentLoaded', () => {
-    initChart();
-    setInterval(updateMeasurement, 2000);
+    document.addEventListener('DOMContentLoaded', () => {
+        latestMeasurementEl = document.getElementById('latest-measurement');
+        highestMeasurementEl = document.getElementById('highest-measurement');
+        lowestMeasurementEl = document.getElementById('lowest-measurement');
+        averageMeasurementEl = document.getElementById('avarage-measurement');
+        durationEl = document.getElementById('duration');
+        materialSelectEl = document.getElementById('material-select');
+        spoolNumberEl = document.getElementById('spool-number');
+        startButton = document.querySelector('.start-btn');
+        stopButton = document.querySelector('.stop-btn');
+        resetButton = document.querySelector('.reset-btn');
+        saveButton = document.querySelector('.save-btn');
 
-    const savedMaterial = localStorage.getItem('selectedMaterial');
-    const savedSpoolNumber = localStorage.getItem('currentSpoolNumber');
+        initChart();
 
-    if (savedMaterial && savedSpoolNumber) {
-        currentMaterial = savedMaterial;
-        currentSpoolNumber = parseInt(savedSpoolNumber);
+        const savedMaterial = localStorage.getItem('selectedMaterial');
+        const savedSpoolNumber = localStorage.getItem('currentSpoolNumber');
+        if (savedMaterial && savedSpoolNumber) {
+            currentMaterial = savedMaterial;
+            currentSpoolNumber = parseInt(savedSpoolNumber, 10);
+            materialSelectEl.value = currentMaterial;
+            spoolNumberEl.textContent = currentSpoolNumber;
+            setTimeout(updateButtonStates, 2000);
+        }
 
-        const materialSelect = document.getElementById('material-select');
-        materialSelect.value = currentMaterial;
+        materialSelectEl.addEventListener('change', onMaterialChange);
+        startButton.addEventListener('click', startMeasurement);
+        stopButton.addEventListener('click', stopMeasurement);
+        resetButton.addEventListener('click', resetMeasurement);
+        saveButton.addEventListener('click', saveData);
 
-        document.getElementById('spool-number').textContent = currentSpoolNumber;
-
-        setTimeout(() => {
-            updateButtonStates();
-        }, 2000);
-    }
-
-    document.querySelector('.start-btn').addEventListener('click', startMeasurement);
-    document.querySelector('.stop-btn').addEventListener('click', stopMeasurement);
-    document.querySelector('.reset-btn').addEventListener('click', resetMeasurement);
-    document.querySelector('.save-btn').addEventListener('click', saveData);
-});
+        setInterval(updateMeasurement, 2000);
+    });
+})();
