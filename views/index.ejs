@@ -15,17 +15,28 @@
     <main>
         <div class="info-box">
             <p><strong>Diameter:</strong> <span id="latest-measurement">N/A</span></p>
+            <p><strong>Gemiddelde:</strong> <span id="avarage-measurement">N/A</span></p>
             <p><strong>Highest:</strong> <span id="highest-measurement">N/A</span></p>
             <p><strong>Lowest:</strong> <span id="lowest-measurement">N/A</span></p>
-            <p><strong>Spool nr:</strong> 5</p>
+            <p><strong>Spool nr:</strong> <span id="spool-number">001</span></p>
             <p><strong>Duration:</strong> <span id="duration">00:00:00</span></p>
             <p><strong>Length:</strong> 100 meter</p>
-        </div>  
+        </div>
 
         <div class="controls">
-            <button class="start-btn">Start</button>
-            <button class="stop-btn">Stop</button>
-            <button class="reset-btn">Reset</button>
+            <label for="material-select" class="dropdown-label">Materiaalsoort:</label>
+            <div class="custom-dropdown">
+                <select id="material-select">
+                    <option value="" disabled selected>Selecteer materiaal</option>
+                    <option value="PLA">PLA</option>
+                    <option value="PETG">PETG</option>
+                    <option value="ABS">ABS</option>
+                </select>
+            </div>
+            <button class="start-btn" disabled>Start</button>
+            <button class="stop-btn" disabled>Stop</button>
+            <button class="reset-btn" disabled>Reset</button>
+            <button class="save-btn" disabled>Save</button>
         </div>
 
         <h2>History</h2>

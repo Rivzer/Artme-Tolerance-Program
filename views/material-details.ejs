@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rolgegevens - <%= material %>-<%= spoolNumber %></title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <header>
+        <img src="/logo.png" alt="The Expert 3D Logo" class="logo">
+    </header>
+
+    <main>
+        <h1>Rolgegevens: <%= material %>-<%= spoolNumber %></h1>
+
+        <div class="info-box">
+            <p><strong>Gemiddelde Diameter:</strong> <span id="average-diameter"><%= data.averageDiameter %> mm</span></p>
+            <p><strong>Highest:</strong> <span id="highest-measurement"><%= data.highest %></span></p>
+            <p><strong>Lowest:</strong> <span id="lowest-measurement"><%= data.lowest %></span></p>
+            <p><strong>Duration:</strong> <span id="duration"><%= data.duration %></span></p>
+        </div>
+
+        <h2>Metingen</h2>
+        <ul>
+            <% data.measurements.forEach((measurement, index) => { %>
+                <li><%= data.timestamps[index] %>: <%= measurement %> mm</li>
+            <% }) %>
+        </ul>
+    </main>
+</body>
+</html>

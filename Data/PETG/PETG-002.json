@@ -1,0 +1,22 @@
+{
+  "material": "PETG",
+  "spoolNumber": 2,
+  "measurements": [
+    1.74,
+    1.82,
+    1.78,
+    1.71,
+    1.76
+  ],
+  "timestamps": [
+    "21:07:28",
+    "21:07:29",
+    "21:07:31",
+    "21:07:33",
+    "21:07:35"
+  ],
+  "highest": "1.82",
+  "lowest": "1.71",
+  "duration": "00:00:07",
+  "averageDiameter": "1.76"
+}

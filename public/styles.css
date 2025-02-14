@@ -1,70 +1,160 @@
 body {
     font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 20px;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    color: #333;
 }
 
-.logo {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 120px;
+header {
+    background-color: #4CAF50;
+    padding: 10px 20px;
+    text-align: center;
+}
+
+header .logo {
+    max-width: 150px;
+    height: auto;
+}
+
+main {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .info-box {
-    background: #A5D6A7;
+    background-color: #f9f9f9;
     padding: 15px;
-    border-radius: 10px;
-    width: 250px;
-    margin: auto;
-    text-align: left;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+}
+
+.info-box p {
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+.info-box strong {
+    color: #4CAF50;
 }
 
 .controls {
-    margin: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.dropdown-label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+
+.custom-dropdown {
+    position: relative;
+    display: inline-block;
+    width: 150px;
+}
+
+.custom-dropdown select {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 2px solid #4CAF50;
+    border-radius: 5px;
+    background-color: white;
+    appearance: none;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.custom-dropdown::after {
+    content: '▼';
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #4CAF50;
+    font-size: 12px;
+}
+
+.custom-dropdown select:hover {
+    border-color: #45a049;
+}
+
+.custom-dropdown select:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+.start-btn, .stop-btn, .reset-btn, .save-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .start-btn {
-    background: #4CAF50;
+    background-color: #4CAF50;
     color: white;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
-    margin-right: 10px;
 }
 
 .stop-btn {
-    background: #E57373;
+    background-color: #f44336;
     color: white;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
-    margin-right: 10px;
 }
 
 .reset-btn {
-    background: #4624dd;
+    background-color: #ff9800;
     color: white;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
 }
 
-.history {
-    border: 1px solid black;
-    width: 60%;
-    height: 150px;
-    margin: auto;
-    padding: 10px;
-    overflow-y: scroll;
-    text-align: left;
+.save-btn {
+    background-color: #2196F3;
+    color: white;
+}
+
+.start-btn:hover {
+    background-color: #45a049;
+}
+
+.stop-btn:hover {
+    background-color: #e53935;
+}
+
+.reset-btn:hover {
+    background-color: #fb8c00;
+}
+
+.save-btn:hover {
+    background-color: #1976D2;
+}
+
+.start-btn:disabled, .stop-btn:disabled, .reset-btn:disabled, .save-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
 }
 
 #historyChart {
     width: 100% !important;
-    max-width: 1650px;
     height: auto;
-    max-height: 55vh;
-    display: block;
-    margin: auto;
+    max-width: auto;
+    max-height: 50vh;
+    margin-top: 20px;
+    max-width: 100%;
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    /*display: block;
+    /*margin: auto;*/
 }

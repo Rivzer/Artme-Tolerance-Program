@@ -1,0 +1,15 @@
+{
+  "material": "PLA",
+  "spoolNumber": 1,
+  "measurements": [
+    1.73,
+    1.77
+  ],
+  "timestamps": [
+    "20:42:22",
+    "20:42:24"
+  ],
+  "highest": "1.77",
+  "lowest": "1.73",
+  "duration": "00:00:03"
+}
