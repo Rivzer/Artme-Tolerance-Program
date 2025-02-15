@@ -1,0 +1,44 @@
+# Artme Tolerance Program
+
+This project was developed by **Kyano** as part of [Artme3D]. The program is designed to measure and track the tolerance of filament rolls used in filament extruders. The program allows users to measure filament diameters, generate QR codes for each roll, and review the measurement history by scanning the QR codes.
+
+## Features
+
+- **Filament Measurements**: Measure and analyze the diameter of filaments.
+- **Multi-language Support**: Supports Dutch, English, and German.
+- **QR Code Generation**: Generate QR codes for filament spools.
+- **User-friendly Interface**: An intuitive and easy-to-use interface.
+
+## Technologies
+
+- **Backend**: Node.js, Express.js
+- **Frontend**: EJS, Tailwind CSS
+- **Database**: None (Local)
+- **Other Tools**: Chart.js for charts, QR-image for QR code generation
+
+## Installation on Raspberry Pi
+
+Follow these steps to set up the project on a Raspberry Pi:
+
+### Prerequisites
+
+1. **Raspberry Pi**: Ensure your Raspberry Pi is running Raspberry Pi OS (previously called Raspbian).
+2. **Node.js**: Install Node.js and npm (Node Package Manager) on your Raspberry Pi.
+
+### Step 1: Clone the Repository
+
+1. Open a terminal on your linux machine.
+2. Clone the repository:
+    git clone https://github.com/Rivzer/Artme-Tolerance-Program.git
+    cd Artme-Tolerance-Program
+3. Set Up Environment Variables
+    sudo apt update
+    sudo apt install nodejs npm
+    npm install
+
+    nano .env
+        PORT=80
+        QR_BASE_URL=http://localhost
+        ADMIN_PASSWORD=69420
+4. Start
+    npm start
