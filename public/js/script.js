@@ -107,7 +107,7 @@
     
             updateButtonStates();
         } catch (error) {
-            console.error('Fout bij ophalen meting:', error);
+            console.error('Error fetching measurement:', error);
         }
     };
 
@@ -118,7 +118,7 @@
             updateButtonStates();
             toggleMaterialDropdown();
         } catch (error) {
-            console.error('Fout bij starten meting:', error);
+            console.error('Error starting measurement:', error);
         }
     };
 
@@ -129,7 +129,7 @@
             updateButtonStates();
             toggleMaterialDropdown();
         } catch (error) {
-            console.error('Fout bij stoppen meting:', error);
+            console.error('Error stopping measurement:', error);
         }
     };
 
@@ -156,10 +156,10 @@
                 spoolNumberEl.textContent = currentSpoolNumber;
                 updateButtonStates();
 
-                localStorage.setItem('currentSpoolNumber', currentSpoolNumber);
+                await updateStateOnServer();
             }
         } catch (error) {
-            console.error('Fout bij resetten meting:', error);
+            console.error('Error resetting measurement:', error);
         }
     };
 
@@ -180,7 +180,6 @@
             stopButton.disabled = !running || paused;
             resetButton.disabled = !running;
             saveButton.disabled = historyChart.data.datasets[0].data.length === 0;
-
             startButton.textContent = (running && paused) ? 'Resume' : 'Start';
             toggleMaterialDropdown();
         } else {
@@ -193,7 +192,7 @@
 
     const saveData = async () => {
         if (historyChart.data.datasets[0].data.length === 0) {
-            alert('Geen data beschikbaar om op te slaan.');
+            alert('No data available to save.');
             return;
         }
 
@@ -219,15 +218,15 @@
             });
             const result = await response.json();
             if (result.success) {
-                alert('Data succesvol opgeslagen.');
+                alert('Data saved successfully.');
                 const qrCodeUrl = `/qr/${currentMaterial}/${currentSpoolNumber}`;
-                console.log('Scan deze QR-code om de rolgegevens te bekijken:', qrCodeUrl);
+                console.log('Scan this QR code to view spool details:', qrCodeUrl);
             } else {
-                alert('Fout bij opslaan van data.');
+                alert('Error saving data.');
             }
         } catch (error) {
-            console.error('Fout bij opslaan van data:', error);
-            alert('Fout bij opslaan van data.');
+            console.error('Error saving data:', error);
+            alert('Error saving data.');
         }
     };
 
@@ -245,10 +244,40 @@
             spoolNumberEl.textContent = currentSpoolNumber;
             updateButtonStates();
 
-            localStorage.setItem('selectedMaterial', currentMaterial);
-            localStorage.setItem('currentSpoolNumber', currentSpoolNumber);
+            await updateStateOnServer();
         } catch (error) {
-            console.error('Fout bij ophalen spoolnummer:', error);
+            console.error('Error fetching spool number:', error);
+        }
+    };
+
+    const updateStateOnServer = async () => {
+        try {
+            await fetch('/update-state', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    selectedMaterial: currentMaterial,
+                    spoolNumber: currentSpoolNumber
+                })
+            });
+        } catch (error) {
+            console.error('Error updating server state:', error);
+        }
+    };
+
+    const loadStateFromServer = async () => {
+        try {
+            const response = await fetch('/get-state');
+            const state = await response.json();
+            if (state.selectedMaterial && state.spoolNumber) {
+                currentMaterial = state.selectedMaterial;
+                currentSpoolNumber = state.spoolNumber;
+                materialSelectEl.value = currentMaterial;
+                spoolNumberEl.textContent = currentSpoolNumber;
+                updateButtonStates();
+            }
+        } catch (error) {
+            console.error('Error loading server state:', error);
         }
     };
 
@@ -267,15 +296,7 @@
 
         initChart();
 
-        const savedMaterial = localStorage.getItem('selectedMaterial');
-        const savedSpoolNumber = localStorage.getItem('currentSpoolNumber');
-        if (savedMaterial && savedSpoolNumber) {
-            currentMaterial = savedMaterial;
-            currentSpoolNumber = parseInt(savedSpoolNumber, 10);
-            materialSelectEl.value = currentMaterial;
-            spoolNumberEl.textContent = currentSpoolNumber;
-            updateButtonStates();
-        }
+        loadStateFromServer();
 
         materialSelectEl.addEventListener('change', onMaterialChange);
         startButton.addEventListener('click', startMeasurement);

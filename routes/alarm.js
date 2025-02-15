@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const { exec } = require('child_process');
+const Gpio = require('pigpio').Gpio;
 
 let buzzer;
 if (process.env.USE_RPI_BUZZER === 'true' && process.platform === 'linux') {
-    const { Gpio } = require('onoff');
     const BUZZER_PIN = parseInt(process.env.BUZZER_PIN, 10);
-    buzzer = new Gpio(BUZZER_PIN, 'out');
+    buzzer = new Gpio(BUZZER_PIN, { mode: Gpio.OUTPUT });
+    console.log('Buzzer initialized on pin', BUZZER_PIN);
 } else if (process.env.USE_RPI_BUZZER === 'true') {
     console.warn('GPIO is not supported on this platform. Buzzer will not work.');
 }
@@ -19,6 +20,8 @@ let lastAlarmTimestamp = null;
 
 router.post('/check', async (req, res) => {
     const { measurement } = req.body;
+
+    console.log("log");
 
     if (typeof measurement !== 'number' || isNaN(measurement)) {
         return res.status(400).json({ success: false, message: 'Invalid measurement' });
@@ -42,7 +45,7 @@ router.post('/check', async (req, res) => {
         });
 
         if (process.env.USE_RPI_BUZZER === 'true' && buzzer) {
-            buzzer.writeSync(1);
+            buzzer.digitalWrite(1);
             console.log('Buzzer turned on');
         }
 
@@ -51,7 +54,7 @@ router.post('/check', async (req, res) => {
         alarmStatus = false;
 
         if (process.env.USE_RPI_BUZZER === 'true' && buzzer) {
-            buzzer.writeSync(0);
+            buzzer.digitalWrite(0);
             console.log('Buzzer turned off');
         }
 
@@ -68,10 +71,14 @@ router.get('/status', (req, res) => {
 });
 
 process.on('SIGINT', () => {
+    console.log('Shutting down...');
+
     if (buzzer) {
-        buzzer.unexport();
-        console.log('Buzzer GPIO pin cleaned up');
+        buzzer.digitalWrite(0);
+        console.log('Buzzer turned off');
     }
+
+    process.exit(0);
 });
 
 module.exports = router;

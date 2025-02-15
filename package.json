@@ -17,7 +17,7 @@
     "express-session": "^1.18.1",
     "fs": "^0.0.1-security",
     "nodemon": "^3.1.9",
-    "onoff": "^6.0.3",
+    "pigpio": "^3.3.1",
     "qr-image": "^3.2.0",
     "serialport": "^13.0.0"
   }
