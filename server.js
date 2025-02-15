@@ -30,6 +30,7 @@ const saveDataRouter = require('./routes/saveData');
 const nextSpoolRouter = require('./routes/nextSpool');
 const controlRouter = require('./routes/control');
 const loginRoute = require('./routes/login');
+const alarmRouter = require('./routes/alarm');
 
 app.use((req, res, next) => {
   res.locals.currentLanguage = req.session.language || 'en';
@@ -46,6 +47,7 @@ app.use('/', saveDataRouter);
 app.use('/', nextSpoolRouter);
 app.use('/', controlRouter);
 app.use('/', loginRoute);
+app.use('/alarm', alarmRouter);
 
 loadData().then(() => {
   app.listen(port, () => {

@@ -56,37 +56,55 @@
         return (sum / measurements.length).toFixed(2);
     };
 
+    const checkAlarm = async (measurement) => {
+        try {
+            const response = await fetch('/alarm/check', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ measurement })
+            });
+            const result = await response.json();
+            if (result.success) {
+                console.log('Alarm triggered!');
+            }
+        } catch (error) {
+            console.error('Error checking alarm:', error);
+        }
+    };
+
     const updateMeasurement = async () => {
         try {
             const response = await fetch('/get-measurement');
             const data = await response.json();
-
+    
             if (data.measurement !== null) {
                 latestMeasurementEl.textContent = data.measurement.toFixed(2);
                 highestMeasurementEl.textContent = Math.max(...data.measurements).toFixed(2);
                 lowestMeasurementEl.textContent = Math.min(...data.measurements).toFixed(2);
                 averageMeasurementEl.textContent = calculateAverageDiameter(data.measurements);
-
+    
                 historyChart.data.labels.push(new Date().toLocaleTimeString());
                 historyChart.data.datasets[0].data.push(data.measurement);
-
+    
                 if (historyChart.data.labels.length > 50) {
                     historyChart.data.labels.shift();
                     historyChart.data.datasets[0].data.shift();
                 }
-
+    
                 historyChart.update();
+    
+                checkAlarm(data.measurement);
             }
-
+    
             running = data.isRunning;
             paused = data.isPaused;
             startTime = data.startTime;
             elapsedTime = data.elapsedTime;
-
+    
             if (running && !paused) {
                 updateDuration();
             }
-
+    
             updateButtonStates();
         } catch (error) {
             console.error('Fout bij ophalen meting:', error);
