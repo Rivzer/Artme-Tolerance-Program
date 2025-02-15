@@ -1,6 +1,4 @@
-# Artme Tolerance Program
-
-![Project Logo](./public/imgs/logo.png)
+# Artme Tolerance Programs
 
 This project was developed by **Kyano** as part of [Artme3D]. The program is designed to measure and track the tolerance of filament rolls used in filament extruders. It allows users to measure filament diameters, generate QR codes for each roll, and review the measurement history by scanning the QR codes.
 
