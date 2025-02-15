@@ -21,6 +21,8 @@ let lastAlarmTimestamp = null;
 router.post('/check', async (req, res) => {
     const { measurement } = req.body;
 
+    console.log("log");
+
     if (typeof measurement !== 'number' || isNaN(measurement)) {
         return res.status(400).json({ success: false, message: 'Invalid measurement' });
     }

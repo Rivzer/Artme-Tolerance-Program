@@ -3,7 +3,7 @@ const express = require('express');
 const session = require('express-session');
 const path = require('path');
 const { loadData } = require('./utils/dataManager');
-const { setLanguage, getTranslation, currentLanguage } = require('./utils/languageManager');
+const { getTranslation, currentLanguage } = require('./utils/languageManager');
 
 const app = express();
 
@@ -51,8 +51,8 @@ app.use('/alarm', alarmRouter);
 
 loadData().then(() => {
   app.listen(port, () => {
-    console.log(`Server draait op http://localhost:${port}`);
+    console.log(`Server is running localhost:${port}`);
   });
 }).catch(err => {
-  console.error('Fout bij laden van data:', err);
+  console.error('Error loading data:', err);
 });

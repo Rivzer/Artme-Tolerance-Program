@@ -1,0 +1,20 @@
+{
+  "material": "ABS",
+  "spoolNumber": 1,
+  "measurements": [
+    1.72,
+    1.73,
+    1.73,
+    1.73
+  ],
+  "timestamps": [
+    "23:27:03",
+    "23:27:04",
+    "23:27:04",
+    "23:27:05"
+  ],
+  "highest": "1.81",
+  "lowest": "1.70",
+  "duration": "00:02:06",
+  "averageDiameter": "1.73"
+}
