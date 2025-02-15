@@ -51,3 +51,8 @@ Follow these steps to set up the project on a Raspberry Pi:
 4. Start
     node server.js 
     <!-- Voeg nog een service file toe anders -->
+
+### How to use
+    On the localhost dashboard you can login with the password thats set in the .env file
+    You can check and print qr codes on example: localhost/qr/PLA/001 (localhost/qr/Material name/Spool nr)
+    Check that spool info at example: localhost/material/PLA/001
