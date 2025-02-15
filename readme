@@ -1,22 +1,32 @@
 # Artme Tolerance Program
 
-This project was developed by **Kyano** as part of [Artme3D]. The program is designed to measure and track the tolerance of filament rolls used in filament extruders. The program allows users to measure filament diameters, generate QR codes for each roll, and review the measurement history by scanning the QR codes.
+![Project Logo](./public/imgs/logo.png)
 
-## Features
+This project was developed by **Kyano** as part of [Artme3D]. The program is designed to measure and track the tolerance of filament rolls used in filament extruders. It allows users to measure filament diameters, generate QR codes for each roll, and review the measurement history by scanning the QR codes.
 
-- **Filament Measurements**: Measure and analyze the diameter of filaments.
-- **Multi-language Support**: Supports Dutch, English, and German.
-- **QR Code Generation**: Generate QR codes for filament spools.
-- **User-friendly Interface**: An intuitive and easy-to-use interface.
+---
 
-## Technologies
+## Features ✨
+
+- **Filament Measurements**: Measure and analyze the diameter of filaments to ensure quality.
+- **Multi-language Support**: Supports Dutch, English, and German for a global user base.
+- **QR Code Generation**: Generate QR codes for filament spools to easily track their history.
+- **User-friendly Interface**: An intuitive and easy-to-use interface designed for seamless operation.
+
+---
+
+## Technologies 🛠️
 
 - **Backend**: Node.js, Express.js
 - **Frontend**: EJS, Tailwind CSS
-- **Database**: None (Local)
-- **Other Tools**: Chart.js for charts, QR-image for QR code generation
+- **Database**: None (Local storage)
+- **Other Tools**:
+  - Chart.js for visualizing measurement data.
+  - QR-image for generating QR codes.
 
-## Installation on Raspberry Pi
+---
+
+## Installation on Raspberry Pi 🚀
 
 Follow these steps to set up the project on a Raspberry Pi:
 
