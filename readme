@@ -41,7 +41,8 @@ Follow these steps to set up the project on a Raspberry Pi:
     cd Artme-Tolerance-Program
 3. Set Up Environment Variables
     sudo apt update
-    sudo apt install nodejs npm
+    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+    sudo apt-get install -y nodejs
     npm install
 
     nano .env
