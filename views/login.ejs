@@ -1,76 +1,41 @@
 <!DOCTYPE html>
 <html lang="nl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inloggen</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .login-box {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            width: 350px;
-            text-align: center;
-        }
-        .login-box h1 {
-            margin-bottom: 25px;
-            font-size: 28px;
-            color: #333;
-        }
-        .login-box input {
-            width: 90%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-        .login-box input:focus {
-            border-color: #28a745;
-            outline: none;
-        }
-        .login-box button {
-            width: 100%;
-            padding: 12px;
-            background-color: #28a745;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-        .login-box button:hover {
-            background-color: #218838;
-        }
-        .error {
-            color: red;
-            margin-top: 10px;
-            font-size: 14px;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/login.css">
 </head>
+
 <body>
     <div class="login-box">
-        <h1>Inloggen</h1>
+        <div class="language-select">
+            <select id="language-select">
+                <option value="nl" <%=currentLanguage==='nl' ? 'selected' : '' %>>Nederlands</option>
+                <option value="en" <%=currentLanguage==='en' ? 'selected' : '' %>>English</option>
+                <option value="de" <%=currentLanguage==='de' ? 'selected' : '' %>>Deutsch</option>
+            </select>
+        </div>
+
+        <h1 id="login-title">
+            <%= getTranslation('loginTitle') %>
+        </h1>
         <form action="/login" method="POST">
-            <input type="password" name="password" placeholder="Voer wachtwoord in" required>
-            <button type="submit">Inloggen</button>
+            <input type="password" name="password" id="password-input"
+                placeholder="<%= getTranslation('passwordPlaceholder') %>" required>
+            <button type="submit" id="login-button">
+                <%= getTranslation('loginButton') %>
+            </button>
         </form>
-        <% if (typeof error !== 'undefined' && error) { %>
-            <p class="error"><%= error %></p>
-        <% } %>
+        <% if (typeof error !=='undefined' && error) { %>
+            <p class="error">
+                <%= getTranslation('errorMessage') %>
+            </p>
+            <% } %>
     </div>
+
+    <script src="js/language.js"></script>
 </body>
+
 </html>

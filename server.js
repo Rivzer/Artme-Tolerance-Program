@@ -3,6 +3,7 @@ const express = require('express');
 const session = require('express-session');
 const path = require('path');
 const { loadData } = require('./utils/dataManager');
+const { setLanguage, getTranslation, currentLanguage } = require('./utils/languageManager');
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(session({
 }));
 
 const indexRouter = require('./routes/index');
+const languageRoute = require('./routes/language');
 const qrRouter = require('./routes/qr');
 const materialRouter = require('./routes/material');
 const measurementRouter = require('./routes/measurement');
@@ -29,6 +31,13 @@ const nextSpoolRouter = require('./routes/nextSpool');
 const controlRouter = require('./routes/control');
 const loginRoute = require('./routes/login');
 
+app.use((req, res, next) => {
+  res.locals.currentLanguage = req.session.language || 'en';
+  res.locals.getTranslation = (key, variables = {}) => getTranslation(req, key, variables);
+  next();
+});
+
+app.use('/', languageRoute);
 app.use('/', indexRouter);
 app.use('/qr', qrRouter);
 app.use('/material', materialRouter);

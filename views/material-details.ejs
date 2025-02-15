@@ -1,33 +1,83 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="<%= currentLanguage %>">
+
 <head>
     <meta charset="UTF-8">
     <link rel="icon" href="/imgs/logo.png" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rolgegevens - <%= material %>-<%= spoolNumber %></title>
+    <title>
+        <%= getTranslation('rollDetailsTitle', { material, spoolNumber }) %>
+    </title>
     <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .language-select {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .language-select select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+    </style>
 </head>
+
 <body>
     <header>
         <img src="/imgs/logo.png" alt="The Expert 3D Logo" class="logo">
+        <div class="language-select">
+            <select id="language-select">
+                <option value="nl" <%=currentLanguage==='nl' ? 'selected' : '' %>>Nederlands</option>
+                <option value="en" <%=currentLanguage==='en' ? 'selected' : '' %>>English</option>
+                <option value="de" <%=currentLanguage==='de' ? 'selected' : '' %>>Deutsch</option>
+            </select>
+        </div>
     </header>
 
     <main>
-        <h1>Rolgegevens: <%= material %>-<%= spoolNumber %></h1>
+        <h1>
+            <%= getTranslation('rollDetailsTitle', { material, spoolNumber }) %>
+        </h1>
 
         <div class="info-box">
-            <p><strong>Gemiddelde Diameter:</strong> <span id="average-diameter"><%= data.averageDiameter %> mm</span></p>
-            <p><strong>Highest:</strong> <span id="highest-measurement"><%= data.highest %></span></p>
-            <p><strong>Lowest:</strong> <span id="lowest-measurement"><%= data.lowest %></span></p>
-            <p><strong>Duration:</strong> <span id="duration"><%= data.duration %></span></p>
+            <p><strong>
+                    <%= getTranslation('averageDiameter') %>:
+                </strong> <span id="average-diameter">
+                    <%= data.averageDiameter %> mm
+                </span></p>
+            <p><strong>
+                    <%= getTranslation('highest') %>:
+                </strong> <span id="highest-measurement">
+                    <%= data.highest %>
+                </span></p>
+            <p><strong>
+                    <%= getTranslation('lowest') %>:
+                </strong> <span id="lowest-measurement">
+                    <%= data.lowest %>
+                </span></p>
+            <p><strong>
+                    <%= getTranslation('duration') %>:
+                </strong> <span id="duration">
+                    <%= data.duration %>
+                </span></p>
         </div>
 
-        <h2>Metingen</h2>
+        <h2>
+            <%= getTranslation('measurements') %>
+        </h2>
         <ul>
-            <% data.measurements.forEach((measurement, index) => { %>
-                <li><%= data.timestamps[index] %>: <%= measurement %> mm</li>
-            <% }) %>
+            <% data.measurements.forEach((measurement, index)=> { %>
+                <li>
+                    <%= data.timestamps[index] %>: <%= measurement %> mm
+                </li>
+                <% }) %>
         </ul>
     </main>
+
+    <script src="/js/language.js"></script>
 </body>
+
 </html>

@@ -1,4 +1,3 @@
-require('dotenv').config();
 const express = require('express');
 const qr = require('qr-image');
 const router = express.Router();

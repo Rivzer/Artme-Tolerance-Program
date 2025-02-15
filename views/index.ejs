@@ -1,51 +1,96 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="<%= currentLanguage %>">
+
 <head>
     <meta charset="UTF-8">
     <link rel="icon" href="/imgs/logo.png" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Filament Metingen</title>
+    <title>
+        <%= getTranslation('title') %>
+    </title>
     <link rel="stylesheet" href="/css/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
     <header>
         <img src="/imgs/logo.png" alt="The Expert 3D Logo" class="logo">
-        <button class="logout-btn" onclick="logout()">Uitloggen</button>
+        <div class="header-right">
+            <div class="language-select">
+                <select id="language-select">
+                    <option value="nl" <%=currentLanguage==='nl' ? 'selected' : '' %>>Nederlands</option>
+                    <option value="en" <%=currentLanguage==='en' ? 'selected' : '' %>>English</option>
+                    <option value="de" <%=currentLanguage==='de' ? 'selected' : '' %>>Deutsch</option>
+                </select>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <%= getTranslation('logoutButton') %>
+            </button>
+        </div>
     </header>
 
     <main>
         <div class="info-box">
-            <p><strong>Diameter:</strong> <span id="latest-measurement">N/A</span></p>
-            <p><strong>Gemiddelde:</strong> <span id="avarage-measurement">N/A</span></p>
-            <p><strong>Highest:</strong> <span id="highest-measurement">N/A</span></p>
-            <p><strong>Lowest:</strong> <span id="lowest-measurement">N/A</span></p>
-            <p><strong>Spool nr:</strong> <span id="spool-number">001</span></p>
-            <p><strong>Duration:</strong> <span id="duration">00:00:00</span></p>
-            <p><strong>Length:</strong> 100 meter</p>
+            <p><strong>
+                    <%= getTranslation('diameter') %>:
+                </strong> <span id="latest-measurement">N/A</span></p>
+            <p><strong>
+                    <%= getTranslation('average') %>:
+                </strong> <span id="avarage-measurement">N/A</span></p>
+            <p><strong>
+                    <%= getTranslation('highest') %>:
+                </strong> <span id="highest-measurement">N/A</span></p>
+            <p><strong>
+                    <%= getTranslation('lowest') %>:
+                </strong> <span id="lowest-measurement">N/A</span></p>
+            <p><strong>
+                    <%= getTranslation('spoolNumber') %>:
+                </strong> <span id="spool-number">001</span></p>
+            <p><strong>
+                    <%= getTranslation('duration') %>:
+                </strong> <span id="duration">00:00:00</span></p>
+            <p><strong>
+                    <%= getTranslation('length') %>:
+                </strong> 100 meter</p>
         </div>
 
         <div class="controls">
-            <label for="material-select" class="dropdown-label">Materiaalsoort:</label>
+            <label for="material-select" class="dropdown-label">
+                <%= getTranslation('materialLabel') %>:
+            </label>
             <div class="custom-dropdown">
                 <select id="material-select">
-                    <option value="" disabled selected>Selecteer materiaal</option>
+                    <option value="" disabled selected>
+                        <%= getTranslation('selectMaterial') %>
+                    </option>
                     <option value="PLA">PLA</option>
                     <option value="PETG">PETG</option>
                     <option value="ABS">ABS</option>
                 </select>
             </div>
-            <button class="start-btn" disabled>Start</button>
-            <button class="stop-btn" disabled>Stop</button>
-            <button class="reset-btn" disabled>Reset</button>
-            <button class="save-btn" disabled>Save</button>
+            <button class="start-btn" disabled>
+                <%= getTranslation('startButton') %>
+            </button>
+            <button class="stop-btn" disabled>
+                <%= getTranslation('stopButton') %>
+            </button>
+            <button class="reset-btn" disabled>
+                <%= getTranslation('resetButton') %>
+            </button>
+            <button class="save-btn" disabled>
+                <%= getTranslation('saveButton') %>
+            </button>
         </div>
 
-        <h2>History</h2>
+        <h2>
+            <%= getTranslation('history') %>
+        </h2>
         <canvas id="historyChart"></canvas>
     </main>
 
     <script type="module" src="js/script.js"></script>
     <script src="js/logout.js"></script>
+    <script src="js/language.js"></script>
 </body>
+
 </html>

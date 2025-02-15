@@ -1,26 +1,58 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="<%= currentLanguage %>">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code</title>
+    <title>
+        <%= getTranslation('qrTitle', { material, spoolNumber }) %>
+    </title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .language-select {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .language-select select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+    </style>
 </head>
+
 <body class="flex items-center justify-center h-screen bg-gray-100">
+    <div class="language-select">
+        <select id="language-select">
+            <option value="nl" <%=currentLanguage==='nl' ? 'selected' : '' %>>Nederlands</option>
+            <option value="en" <%=currentLanguage==='en' ? 'selected' : '' %>>English</option>
+            <option value="de" <%=currentLanguage==='de' ? 'selected' : '' %>>Deutsch</option>
+        </select>
+    </div>
+
     <div class="bg-white p-6 rounded-lg shadow-lg text-center">
-        <h1 class="text-2xl font-bold text-gray-700 mb-4">QR Code voor <span class="text-green-500"><%= material %> - Spool <%= spoolNumber %></span></h1>
-        
+        <h1 class="text-2xl font-bold text-gray-700 mb-4">
+            <%= getTranslation('qrTitle', { material, spoolNumber }) %>
+        </h1>
+
         <div id="qr-container" class="border-2 border-gray-300 p-4 rounded-lg bg-white inline-block">
             <img src="data:image/png;base64,<%= qrCode %>" alt="QR Code" class="mx-auto w-48 h-48">
         </div>
 
-        <button onclick="printQR()" class="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600">
-            Print QR Code
+        <button onclick="printQR()"
+            class="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600">
+            <%= getTranslation('printButton') %>
         </button>
-        
-        <a href="/" class="block mt-2 text-blue-500 hover:underline">Terug naar home</a>
+
+        <a href="/" class="block mt-2 text-blue-500 hover:underline">
+            <%= getTranslation('backLink') %>
+        </a>
     </div>
 
+    <script src="/js/language.js"></script>
     <script>
         function printQR() {
             const qrContainer = document.getElementById('qr-container').innerHTML;
@@ -32,4 +64,5 @@
         }
     </script>
 </body>
+
 </html>
